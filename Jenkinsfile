@@ -28,7 +28,7 @@ pipeline {
         }
         stage('Unit Testing') {
             steps {
-                echo 'dotnet test'
+                sh 'dotnet test'
             }
         }
         

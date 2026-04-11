@@ -1,4 +1,5 @@
 using NoteApp.Services;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,12 +11,10 @@ string connectionString = File.Exists(vaultConnStrPath)
     ? File.ReadAllText(vaultConnStrPath).Trim()
     : throw new FileNotFoundException($"❌ ERROR: Vault secret file not found at {vaultConnStrPath}");
 
-builder.Services.Configure<DatabaseSettings>(options =>
-{
-    options.ConnectionString = connectionString;
-    options.DatabaseName = "NoteDb";
-});
+var client = new MongoClient(connectionString);
+var database = client.GetDatabase("NoteDb");
 
+builder.Services.AddSingleton<IMongoDatabase>(database);
 builder.Services.AddSingleton<NoteService>();
 builder.Services.AddControllersWithViews();
 

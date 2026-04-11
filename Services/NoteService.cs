@@ -8,10 +8,8 @@ namespace NoteApp.Services
     {
         private readonly IMongoCollection<Note> _notes;
 
-        public NoteService(IOptions<DatabaseSettings> settings)
+        public NoteService(IMongoDatabase database)
         {
-            var client = new MongoClient(settings.Value.ConnectionString);
-            var database = client.GetDatabase(settings.Value.DatabaseName);
             _notes = database.GetCollection<Note>("Notes");
         }
 
