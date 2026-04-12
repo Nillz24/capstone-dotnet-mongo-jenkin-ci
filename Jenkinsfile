@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'git-token', url: 'https://github.com/jaiswaladi246/Capstone-DotNET-Mongo-CI.git'
+                git branch: 'main', credentialsId: 'git-cred', url: 'https://github.com/Nillz24/capstone-dotnet-mongo-jenkin-ci.git'
             }
         }
         stage('Gitleaks Scan') {
@@ -53,7 +53,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker-cred') {
-                        sh "docker build -t adijaiswal/noteapp:$IMAGE_TAG ."
+                        sh "docker build -t nillz26/noteapp:$IMAGE_TAG ."
                     }
                 }
             }
@@ -61,7 +61,7 @@ pipeline {
         
         stage('trivy Image Scan') {
             steps {
-              sh 'trivy image --format table -o trivy-image-report.html adijaiswal/noteapp:$IMAGE_TAG'
+              sh 'trivy image --format table -o trivy-image-report.html nillz26/noteapp:$IMAGE_TAG'
             }
         }
         
@@ -69,7 +69,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker-cred') {
-                        sh "docker push adijaiswal/noteapp:$IMAGE_TAG"
+                        sh "docker push nillz26/noteapp:$IMAGE_TAG"
                     }
                 }
             }
@@ -85,7 +85,7 @@ pipeline {
                             
                             # Update the tag in manifest
                             cd Capstone-DotNET-Mongo-CD
-                            sed -i "s|adijaiswal/noteapp:.*|adijaiswal/noteapp:${IMAGE_TAG}|" Manifest/manifest.yaml
+                            sed -i "s|nillz26/noteapp:.*|nillz26/noteapp:${IMAGE_TAG}|" Manifest/manifest.yaml
                             
                             # Confirm Changes
                             echo "Updated manifest file contents:"
@@ -129,9 +129,9 @@ pipeline {
             emailext (
                 subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
                 body: body,
-                to: '567adddi.jais@gmail.com',
-                from: 'jaiswaladi246@gmail.com',
-                replyTo: 'jenkins@devopsshack.com',
+                to: 'nills009@gmail.com',
+                from: 'nills009@gmail.com',
+                replyTo: 'jenkins@gmail.com',
                 mimeType: 'text/html',
                
             )
