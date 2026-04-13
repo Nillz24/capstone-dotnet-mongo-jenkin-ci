@@ -74,6 +74,7 @@ pipeline {
                 }
             }
         }
+        /*
         stage('Update Manifest File CD Repo') {
             steps {
                 script {
@@ -102,7 +103,7 @@ pipeline {
                     
                 }
             }
-        }
+        } */
     }
     post {
     always {
