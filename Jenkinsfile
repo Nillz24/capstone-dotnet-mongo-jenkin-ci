@@ -23,7 +23,7 @@ pipeline {
         }
         stage('trivy FS Scan') {
             steps {
-              sh 'trivy fs --format table -o trivy-fs-report.html .'
+              sh 'trivy fs --format table -o trivy-fs-report.html --timeout 40m .'
             }
         }
         stage('Unit Testing') {
@@ -61,7 +61,7 @@ pipeline {
         
         stage('trivy Image Scan') {
             steps {
-              sh 'trivy image --format table -o trivy-image-report.html nillz26/noteapp:$IMAGE_TAG'
+              sh 'trivy image --format table -o trivy-image-report.html --timeout 40m nillz26/noteapp:$IMAGE_TAG'
             }
         }
         
