@@ -23,26 +23,36 @@ namespace NoteApp.Tests.Services
 
             _service = new NoteService(_mockDatabase.Object);
         }
+        private static Mock<IAsyncCursor<Note>> CreateCursor(List<Note> data)
+        {
+            var mockCursor = new Mock<IAsyncCursor<Note>>();
+
+            mockCursor.Setup(c => c.Current).Returns(data);
+            mockCursor.SetupSequence(c => c.MoveNext(It.IsAny<CancellationToken>()))
+                    .Returns(true)
+                    .Returns(false);
+
+            return mockCursor;
+        }
+
 
         [Fact]
         public void GetAll_ReturnsAllNotes()
         {
             // Arrange
-            var notes = new List<Note> { new Note { Id = "1", Title = "Test", Content = "Content" } };
-            
+            var notes = new List<Note>
+            {
+                new Note { Id = "1", Title = "Test", Content = "Content" }
+            };
 
-
-
-            var mockFindFluent = new Mock<IFindFluent<Note, Note>>();
-
-            mockFindFluent.Setup(f => f.ToList(It.IsAny<CancellationToken>()))
-              .Returns(notes);
+            var mockCursor = CreateCursor(notes);
 
             _mockCollection
-                .Setup(c => c.Find(
-                It.IsAny<FilterDefinition<Note>>(),
-                It.IsAny<FindOptions>()))
-                .Returns(mockFindFluent.Object);               
+                .Setup(c => c.FindSync(
+                    It.IsAny<FilterDefinition<Note>>(),
+                    It.IsAny<FindOptions<Note, Note>>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(mockCursor.Object);               
 
             // Act
             var result = _service.GetAll();
@@ -58,17 +68,16 @@ namespace NoteApp.Tests.Services
         {
             // Arrange
             var note = new Note { Id = "1", Title = "Test", Content = "Content" };
+            var notes = new List<Note> { note };
 
-            var mockFindFluent = new Mock<IFindFluent<Note, Note>>();
-
-            mockFindFluent.Setup(f => f.FirstOrDefault(It.IsAny<CancellationToken>()))
-                        .Returns(note);
+            var mockCursor = CreateCursor(notes);
 
             _mockCollection
-                .Setup(c => c.Find(
+                .Setup(c => c.FindSync(
                     It.IsAny<FilterDefinition<Note>>(),
-                    It.IsAny<FindOptions>()))
-                .Returns(mockFindFluent.Object);
+                    It.IsAny<FindOptions<Note, Note>>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(mockCursor.Object);
 
             // Act
             var result = _service.GetById("1");
@@ -82,16 +91,16 @@ namespace NoteApp.Tests.Services
         public void GetById_ReturnsNull_WhenNotExists()
         {
             // Arrange
-            var mockFindFluent = new Mock<IFindFluent<Note, Note>>();
+            var notes = new List<Note>();
 
-            mockFindFluent.Setup(f => f.FirstOrDefault(It.IsAny<CancellationToken>()))
-                        .Returns((Note)null);
+            var mockCursor = CreateCursor(notes);
 
             _mockCollection
-                .Setup(c => c.Find(
+                .Setup(c => c.FindSync(
                     It.IsAny<FilterDefinition<Note>>(),
-                    It.IsAny<FindOptions>()))
-                .Returns(mockFindFluent.Object);
+                    It.IsAny<FindOptions<Note, Note>>(),
+                    It.IsAny<CancellationToken>()))
+                .Returns(mockCursor.Object);
 
             // Act
             var result = _service.GetById("1");
@@ -137,7 +146,9 @@ namespace NoteApp.Tests.Services
             _service.Delete("1");
 
             // Assert
-            _mockCollection.Verify(c => c.DeleteOne(It.IsAny<FilterDefinition<Note>>(), It.IsAny<DeleteOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mockCollection.Verify(c => c.DeleteOne(It.IsAny<FilterDefinition<Note>>(),
+                                        It.IsAny<CancellationToken>()),
+                       Times.Once);
         }
     }
 }

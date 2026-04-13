@@ -18,6 +18,7 @@ namespace NoteApp.Tests.Controllers
             _controller = new NotesController(_mockService.Object);
         }
 
+
         [Fact]
         public void Index_ReturnsViewWithNotes()
         {
