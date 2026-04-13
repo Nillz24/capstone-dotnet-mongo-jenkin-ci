@@ -28,7 +28,7 @@ pipeline {
         }
         stage('Unit Testing') {
             steps {
-                sh 'dotnet test'
+                sh 'dotnet test Tests/NoteApp.Tests.csproj --logger "trx;LogFileName=test-results.trx"'
             }
         }
         
