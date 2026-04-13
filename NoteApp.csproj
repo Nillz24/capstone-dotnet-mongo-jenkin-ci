@@ -10,6 +10,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.21.0" />
   </ItemGroup>
+  <ItemGroup>
+  <Compile Remove="Tests/**/*.cs" />
+</ItemGroup>
 
 </Project>
 
