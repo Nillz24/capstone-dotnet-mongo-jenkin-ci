@@ -33,8 +33,16 @@ namespace NoteApp.Tests.Services
             mockCursor.SetupSequence(c => c.MoveNext(It.IsAny<CancellationToken>())).Returns(true).Returns(false);
             mockCursor.SetupSequence(c => c.MoveNextAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true).ReturnsAsync(false);
 
-            _mockCollection.Setup(c => c.FindSync(It.IsAny<FilterDefinition<Note>>(), It.IsAny<FindOptions<Note, Note>>(), It.IsAny<CancellationToken>()))
-                           .Returns(mockCursor.Object);
+
+
+            var mockFindFluent = new Mock<IFindFluent<Note, Note>>();
+
+            mockFindFluent.Setup(f => f.ToList(It.IsAny<CancellationToken>()))
+              .Returns(notes);
+
+            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>(),
+                                 It.IsAny<FindOptions<Note, Note>>()))
+               .Returns(mockFindFluent.Object);               
 
             // Act
             var result = _service.GetAll();
@@ -44,18 +52,21 @@ namespace NoteApp.Tests.Services
             Assert.Equal("1", result[0].Id);
         }
 
+       
         [Fact]
         public void GetById_ReturnsNote_WhenExists()
         {
             // Arrange
             var note = new Note { Id = "1", Title = "Test", Content = "Content" };
-            var notes = new List<Note> { note };
-            var mockCursor = new Mock<IAsyncCursor<Note>>();
-            mockCursor.Setup(c => c.Current).Returns(notes);
-            mockCursor.SetupSequence(c => c.MoveNext(It.IsAny<CancellationToken>())).Returns(true).Returns(false);
 
-            _mockCollection.Setup(c => c.FindSync(It.IsAny<FilterDefinition<Note>>(), It.IsAny<FindOptions<Note, Note>>(), It.IsAny<CancellationToken>()))
-                           .Returns(mockCursor.Object);
+            var mockFindFluent = new Mock<IFindFluent<Note, Note>>();
+
+            mockFindFluent.Setup(f => f.FirstOrDefault(It.IsAny<CancellationToken>()))
+                        .Returns(note);
+
+            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>(),
+                                            It.IsAny<FindOptions<Note, Note>>()))
+                        .Returns(mockFindFluent.Object);
 
             // Act
             var result = _service.GetById("1");
@@ -69,13 +80,14 @@ namespace NoteApp.Tests.Services
         public void GetById_ReturnsNull_WhenNotExists()
         {
             // Arrange
-            var notes = new List<Note>();
-            var mockCursor = new Mock<IAsyncCursor<Note>>();
-            mockCursor.Setup(c => c.Current).Returns(notes);
-            mockCursor.SetupSequence(c => c.MoveNext(It.IsAny<CancellationToken>())).Returns(false);
+            var mockFindFluent = new Mock<IFindFluent<Note, Note>>();
 
-            _mockCollection.Setup(c => c.FindSync(It.IsAny<FilterDefinition<Note>>(), It.IsAny<FindOptions<Note, Note>>(), It.IsAny<CancellationToken>()))
-                           .Returns(mockCursor.Object);
+            mockFindFluent.Setup(f => f.FirstOrDefault(It.IsAny<CancellationToken>()))
+                        .Returns((Note)null);
+
+            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>(),
+                                            It.IsAny<FindOptions<Note, Note>>()))
+                        .Returns(mockFindFluent.Object);
 
             // Act
             var result = _service.GetById("1");

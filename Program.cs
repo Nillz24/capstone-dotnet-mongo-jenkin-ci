@@ -17,6 +17,7 @@ var database = client.GetDatabase("NoteDb");
 builder.Services.AddSingleton<IMongoDatabase>(database);
 builder.Services.AddSingleton<NoteService>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<INoteService, NoteService>();
 
 var app = builder.Build();
 
