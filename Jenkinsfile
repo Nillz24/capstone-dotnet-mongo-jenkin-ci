@@ -4,6 +4,9 @@ pipeline {
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
         IMAGE_TAG = "v${BUILD_NUMBER}"
+        TRIVY_CACHE_DIR = "/var/lib/jenkins/trivy-cache"
+        TRIVY_DB_REPOSITORY = "ghcr.io/aquasecurity/trivy-db"
+    
     }
     stages {
         stage('Git Checkout') {
@@ -23,7 +26,10 @@ pipeline {
         }
         stage('trivy FS Scan') {
             steps {
-              sh 'trivy fs --format table -o trivy-fs-report.html --timeout 40m .'
+                
+              sh '''trivy --download-db-only --timeout 40m
+
+                    trivy fs --cache-dir $TRIVY_CACHE_DIR --format table -o trivy-fs-report.html --timeout 20m .'''
             }
         }
         stage('Unit Testing') {
@@ -61,7 +67,7 @@ pipeline {
         
         stage('trivy Image Scan') {
             steps {
-              sh 'trivy image --format table -o trivy-image-report.html --timeout 40m nillz26/noteapp:$IMAGE_TAG'
+              sh 'trivy image --cache-dir $TRIVY_CACHE_DIR--format table -o trivy-image-report.html --timeout 20m nillz26/noteapp:$IMAGE_TAG'
             }
         }
         
