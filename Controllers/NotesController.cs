@@ -6,9 +6,9 @@ namespace NoteApp.Controllers
 {
     public class NotesController : Controller
     {
-        private readonly NoteService _noteService;
+        private readonly INoteService _noteService;
 
-        public NotesController(NoteService noteService)
+        public NotesController(INoteService noteService)
         {
             _noteService = noteService;
         }
