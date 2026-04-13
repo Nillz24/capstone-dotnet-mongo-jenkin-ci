@@ -41,7 +41,7 @@ namespace NoteApp.Tests.Services
               .Returns(notes);
 
             _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>(),
-                                 It.IsAny<FindOptions<Note, Note>>()))
+                                 It.IsAny<FindOptions>()))
                .Returns(mockFindFluent.Object);               
 
             // Act
