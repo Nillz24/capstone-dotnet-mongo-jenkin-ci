@@ -38,8 +38,11 @@ namespace NoteApp.Tests.Services
             mockFindFluent.Setup(f => f.ToList(It.IsAny<CancellationToken>()))
               .Returns(notes);
 
-            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>()))
-               .Returns(mockFindFluent.Object);               
+            _mockCollection
+                .Setup(c => c.Find(
+                It.IsAny<FilterDefinition<Note>>(),
+                It.IsAny<FindOptions>()))
+                .Returns(mockFindFluent.Object);               
 
             // Act
             var result = _service.GetAll();
@@ -61,8 +64,11 @@ namespace NoteApp.Tests.Services
             mockFindFluent.Setup(f => f.FirstOrDefault(It.IsAny<CancellationToken>()))
                         .Returns(note);
 
-            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>()))
-                        .Returns(mockFindFluent.Object);
+            _mockCollection
+                .Setup(c => c.Find(
+                    It.IsAny<FilterDefinition<Note>>(),
+                    It.IsAny<FindOptions>()))
+                .Returns(mockFindFluent.Object);
 
             // Act
             var result = _service.GetById("1");
@@ -81,8 +87,11 @@ namespace NoteApp.Tests.Services
             mockFindFluent.Setup(f => f.FirstOrDefault(It.IsAny<CancellationToken>()))
                         .Returns((Note)null);
 
-            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>()))
-                        .Returns(mockFindFluent.Object);
+            _mockCollection
+                .Setup(c => c.Find(
+                    It.IsAny<FilterDefinition<Note>>(),
+                    It.IsAny<FindOptions>()))
+                .Returns(mockFindFluent.Object);
 
             // Act
             var result = _service.GetById("1");
