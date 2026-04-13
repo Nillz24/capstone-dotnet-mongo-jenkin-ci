@@ -52,7 +52,7 @@ pipeline {
         stage('Build Image & Tag Image') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker-cred') {
+                    withDockerRegistry(credentialsId: 'docker-token') {
                         sh "docker build -t nillz26/noteapp:$IMAGE_TAG ."
                     }
                 }
@@ -68,7 +68,7 @@ pipeline {
         stage('Push Image') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'docker-cred') {
+                    withDockerRegistry(credentialsId: 'docker-token') {
                         sh "docker push nillz26/noteapp:$IMAGE_TAG"
                     }
                 }
@@ -78,7 +78,7 @@ pipeline {
             steps {
                 script {
                     cleanWs()
-                    withCredentials([usernamePassword(credentialsId: 'git-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                    withCredentials([usernamePassword(credentialsId: 'git-cred', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                         sh '''
                             # Clone the CD Repo
                             git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Nillz24/capstone-dotnet-mongo-jenkin-ci.git
