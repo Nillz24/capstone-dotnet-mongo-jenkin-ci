@@ -4,6 +4,7 @@ using NoteApp.Models;
 using NoteApp.Services;
 using Xunit;
 
+
 namespace NoteApp.Tests.Services
 {
     public class NoteServiceTests
@@ -28,10 +29,7 @@ namespace NoteApp.Tests.Services
         {
             // Arrange
             var notes = new List<Note> { new Note { Id = "1", Title = "Test", Content = "Content" } };
-            var mockCursor = new Mock<IAsyncCursor<Note>>();
-            mockCursor.Setup(c => c.Current).Returns(notes);
-            mockCursor.SetupSequence(c => c.MoveNext(It.IsAny<CancellationToken>())).Returns(true).Returns(false);
-            mockCursor.SetupSequence(c => c.MoveNextAsync(It.IsAny<CancellationToken>())).ReturnsAsync(true).ReturnsAsync(false);
+            
 
 
 
@@ -40,8 +38,7 @@ namespace NoteApp.Tests.Services
             mockFindFluent.Setup(f => f.ToList(It.IsAny<CancellationToken>()))
               .Returns(notes);
 
-            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>(),
-                                 It.IsAny<FindOptions>()))
+            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>()))
                .Returns(mockFindFluent.Object);               
 
             // Act
@@ -64,8 +61,7 @@ namespace NoteApp.Tests.Services
             mockFindFluent.Setup(f => f.FirstOrDefault(It.IsAny<CancellationToken>()))
                         .Returns(note);
 
-            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>(),
-                                            It.IsAny<FindOptions<Note, Note>>()))
+            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>()))
                         .Returns(mockFindFluent.Object);
 
             // Act
@@ -85,8 +81,7 @@ namespace NoteApp.Tests.Services
             mockFindFluent.Setup(f => f.FirstOrDefault(It.IsAny<CancellationToken>()))
                         .Returns((Note)null);
 
-            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>(),
-                                            It.IsAny<FindOptions<Note, Note>>()))
+            _mockCollection.Setup(c => c.Find(It.IsAny<FilterDefinition<Note>>()))
                         .Returns(mockFindFluent.Object);
 
             // Act
