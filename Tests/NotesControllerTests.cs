@@ -9,12 +9,12 @@ namespace NoteApp.Tests.Controllers
 {
     public class NotesControllerTests
     {
-        private readonly Mock<NoteService> _mockService;
+        private readonly Mock<INoteService> _mockService;
         private readonly NotesController _controller;
 
         public NotesControllerTests()
         {
-            _mockService = new Mock<NoteService>();
+            _mockService = new Mock<INoteService>();
             _controller = new NotesController(_mockService.Object);
         }
 
