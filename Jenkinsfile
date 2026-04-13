@@ -6,6 +6,8 @@ pipeline {
         IMAGE_TAG = "v${BUILD_NUMBER}"
         TRIVY_CACHE_DIR = "/var/lib/jenkins/trivy-cache"
         TRIVY_DB_REPOSITORY = "ghcr.io/aquasecurity/trivy-db"
+        NUGET_PACKAGES = "/var/lib/jenkins/.nuget/packages"
+        NUGET_HTTP_TIMEOUT = "900"
     
     }
     stages {
@@ -30,12 +32,19 @@ pipeline {
               sh '''trivy fs --cache-dir $TRIVY_CACHE_DIR --format table -o trivy-fs-report.html --timeout 130m .'''
             }
         }
-        stage('Unit Testing') {
+        stage('Restore') {
             steps {
-                sh 'dotnet test Tests/NoteApp.Tests.csproj '
+                retry(3) {
+                    sh 'dotnet restore Tests/NoteApp.Tests.csproj --disable-parallel'
+                }
             }
         }
-        
+
+        stage('Test') {
+            steps {
+                sh 'dotnet test Tests/NoteApp.Tests.csproj --no-restore'
+            }
+        }
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
