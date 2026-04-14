@@ -49,8 +49,13 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=NoteApp \
-                            -Dsonar.projectKey=NoteApp -Dsonar.ws.timeout=3000 '''
+                    sh ''' ${SCANNER_HOME}/bin/sonar-scanner \
+                            -Dsonar.projectKey=NoteApp \
+                            -Dsonar.projectName=NoteApp \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.token=${SONAR_AUTH_TOKEN} \
+                            -Dsonar.scanner.skipJreProvisioning=true \
+                            -Dsonar.scanner.socketTimeout=3000 '''
                 }
             }
         }
