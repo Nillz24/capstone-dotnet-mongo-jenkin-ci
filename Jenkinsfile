@@ -8,6 +8,7 @@ pipeline {
         TRIVY_DB_REPOSITORY = "ghcr.io/aquasecurity/trivy-db"
         NUGET_PACKAGES = "/var/lib/jenkins/.nuget/packages"
         NUGET_HTTP_TIMEOUT = "900"
+        SONAR_SCANNER_OPTS = "-Dsonar.scanner.skipJreProvisioning=true"
     
     }
     stages {
