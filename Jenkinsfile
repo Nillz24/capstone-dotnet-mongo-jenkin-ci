@@ -9,6 +9,7 @@ pipeline {
         NUGET_PACKAGES = "/var/lib/jenkins/.nuget/packages"
         NUGET_HTTP_TIMEOUT = "900"
         SONAR_SCANNER_OPTS = "-Dsonar.scanner.skipJreProvisioning=true"
+        DOCKER_BUILDKIT = '1'
     
     }
     stages {
@@ -71,8 +72,23 @@ pipeline {
         stage('Build Image & Tag Image') {
             steps {
                 script {
+                    def PREV_TAG = sh(
+                            def CURRENT_TAG = "v${env.BUILD_NUMBER}"
+                            def PREV_TAG = "v${env.BUILD_NUMBER.toInteger() - 1}"
                     withDockerRegistry(credentialsId: 'docker-token') {
-                        sh "docker build -t nillz26/noteapp:$IMAGE_TAG ."
+                        sh """
+                            echo "Current tag: ${CURRENT_TAG}"
+                            echo "Previous tag: ${PREV_TAG}"
+
+                            # Try pulling previous image for cache
+                            docker pull nillz26/noteapp:${PREV_TAG} || true
+
+                            # Build with cache
+                            docker build \
+                            --cache-from=nillz26/noteapp:${PREV_TAG} \
+                            -t nillz26/noteapp:${CURRENT_TAG} \
+                            . """
+
                     }
                 }
             }
