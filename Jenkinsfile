@@ -50,7 +50,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonar') {
                     sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=NoteApp \
-                            -Dsonar.projectKey=NoteApp '''
+                            -Dsonar.projectKey=NoteApp -Dsonar.ws.timeout=3000 '''
                 }
             }
         }
