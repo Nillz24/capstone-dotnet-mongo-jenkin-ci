@@ -73,7 +73,7 @@ pipeline {
             steps {
                 script {
                         def CURRENT_TAG = "v${env.BUILD_NUMBER}"
-                        def PREV_TAG = env.BUILD_NUMBER.toInteger() > 1 ? "v${env.BUILD_NUMBER.toInteger() - 3}" : ""
+                        def PREV_TAG = env.BUILD_NUMBER.toInteger() > 1 ? "v${env.BUILD_NUMBER.toInteger() - 4}" : ""
                     withDockerRegistry(credentialsId: 'docker-token') {
                         sh """
                             echo "Current tag: ${CURRENT_TAG}"
