@@ -72,9 +72,8 @@ pipeline {
         stage('Build Image & Tag Image') {
             steps {
                 script {
-                    def PREV_TAG = sh(
-                            def CURRENT_TAG = "v${env.BUILD_NUMBER}"
-                            def PREV_TAG = "v${env.BUILD_NUMBER.toInteger() - 1}"
+                        def CURRENT_TAG = "v${env.BUILD_NUMBER}"
+                        def PREV_TAG = env.BUILD_NUMBER.toInteger() > 1 ? "v${env.BUILD_NUMBER.toInteger() - 2}" : ""
                     withDockerRegistry(credentialsId: 'docker-token') {
                         sh """
                             echo "Current tag: ${CURRENT_TAG}"
