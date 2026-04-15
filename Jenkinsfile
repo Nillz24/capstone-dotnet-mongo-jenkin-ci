@@ -31,7 +31,7 @@ pipeline {
         stage('trivy FS Scan') {
             steps {
                 
-              sh '''trivy fs --cache-dir $TRIVY_CACHE_DIR --format table -o trivy-fs-report.html --timeout 130m .'''
+              sh '''trivy fs --cache-dir $TRIVY_CACHE_DIR --skip-db-update --format table -o trivy-fs-report.html --timeout 130m .'''
             }
         }
         stage('Restore') {
@@ -95,7 +95,7 @@ pipeline {
         
         stage('trivy Image Scan') {
             steps {
-              sh 'trivy image --cache-dir $TRIVY_CACHE_DIR--format table -o trivy-image-report.html --timeout 130m nillz26/noteapp:$IMAGE_TAG'
+              sh 'trivy image --cache-dir $TRIVY_CACHE_DIR --skip-db-update --format table -o trivy-image-report.html --timeout 130m nillz26/noteapp:$IMAGE_TAG'
             }
         }
         
